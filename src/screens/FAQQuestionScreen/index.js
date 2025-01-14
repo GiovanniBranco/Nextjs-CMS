@@ -3,6 +3,8 @@ import { Footer } from "../../components/commons/Footer";
 import { Menu } from "../../components/commons/Menu";
 import { Box, Text, theme } from "../../theme/components";
 import CmsService from "../../services/cmsService";
+import { renderNodeRule, StructuredText } from "react-datocms";
+import { isHeading } from "datocms-structured-text-utils";
 
 export async function getStaticPaths() {
   return {
@@ -15,20 +17,14 @@ export async function getStaticProps({ params }) {
   const { id } = params;
   try {
     const data = await CmsService.getFaqQuestionContent();
-    console.log(data);
+    const globalContent = await CmsService.getGlobalContent();
+    console.log(globalContent);
     return {
       props: {
         id,
         title: data?.contentFaqQuestion?.title,
-        content: `
-        <h2>Primeiro Tópico</h2>
-        <p>paragrafo simples</p>
-        <p>outro paragrafo simples</p>
-        <ul>
-          <li>Item de lista 01</li>
-          <li>Item de lista 02</li>
-        </ul>
-      `,
+        content: data?.contentFaqQuestion?.content,
+        globalContent: globalContent,
       },
     };
   } catch (e) {
@@ -36,7 +32,7 @@ export async function getStaticProps({ params }) {
   }
 }
 
-export default function FAQQuestionScreen({ title, content }) {
+export default function FAQQuestionScreen({ title, content, globalContent }) {
   return (
     <>
       <Head>
@@ -68,11 +64,23 @@ export default function FAQQuestionScreen({ title, content }) {
             {title}
           </Text>
 
-          <Box dangerouslySetInnerHTML={{ __html: content }} />
+          <StructuredText
+            data={content}
+            customNodeRules={[
+              renderNodeRule(isHeading, ({ children, key, node }) => {
+                const variant = `heading${node.level + 1}`;
+                return (
+                  <Text key={key} variant={variant}>
+                    {children}
+                  </Text>
+                );
+              }),
+            ]}
+          />
         </Box>
       </Box>
 
-      <Footer />
+      <Footer description={globalContent?.globalFooter?.description} />
     </>
   );
 }

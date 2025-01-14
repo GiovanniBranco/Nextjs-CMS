@@ -13,11 +13,11 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params, preview }) {
   const { id } = params;
   try {
-    const data = await CmsService.getFaqQuestionContent();
-    const globalContent = await CmsService.getGlobalContent();
+    const data = await CmsService.getFaqQuestionContent(preview);
+    const globalContent = await CmsService.getGlobalContent(preview);
     return {
       props: {
         id,

@@ -18,7 +18,6 @@ export async function getStaticProps({ params }) {
   try {
     const data = await CmsService.getFaqQuestionContent();
     const globalContent = await CmsService.getGlobalContent();
-    console.log(globalContent);
     return {
       props: {
         id,

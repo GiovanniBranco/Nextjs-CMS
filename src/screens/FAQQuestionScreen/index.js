@@ -1,10 +1,11 @@
+import { isHeading } from "datocms-structured-text-utils";
 import Head from "next/head";
+import { renderNodeRule, StructuredText } from "react-datocms";
 import { Footer } from "../../components/commons/Footer";
 import { Menu } from "../../components/commons/Menu";
-import { Box, Text, theme } from "../../theme/components";
+import { PageHoc } from "../../components/wrappers/pageHOC";
 import CmsService from "../../services/cmsService";
-import { renderNodeRule, StructuredText } from "react-datocms";
-import { isHeading } from "datocms-structured-text-utils";
+import { Box, Text, theme } from "../../theme/components";
 
 export async function getStaticPaths() {
   return {
@@ -31,7 +32,7 @@ export async function getStaticProps({ params, preview }) {
   }
 }
 
-export default function FAQQuestionScreen({ title, content, globalContent }) {
+function FAQQuestionScreen({ title, content }) {
   return (
     <>
       <Head>
@@ -79,7 +80,9 @@ export default function FAQQuestionScreen({ title, content, globalContent }) {
         </Box>
       </Box>
 
-      <Footer description={globalContent?.globalFooter?.description} />
+      <Footer />
     </>
   );
 }
+
+export default PageHoc(FAQQuestionScreen);

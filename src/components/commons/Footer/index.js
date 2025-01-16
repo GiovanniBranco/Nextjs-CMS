@@ -1,6 +1,9 @@
+import { getGlobalContent } from "../../../services/providers/cmsProvider";
 import { Box, Text, theme, Link } from "../../../theme/components";
 
-export function Footer({ description }) {
+export function Footer() {
+  const description = getGlobalContent()?.globalFooter?.description;
+
   return (
     <Box
       tag="footer"

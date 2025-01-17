@@ -25,6 +25,37 @@ class CmsService {
     return await this.fetchData(query, isPreview);
   }
 
+  async getHomeContent(isPreview = false) {
+    const query = `query {
+        pageHome {
+          pageContent {
+            section{
+              componentName: __typename
+              ... on CommonSeoBlockRecord {
+                id
+                title
+              }
+              ...on CommonMenuRecord {
+                id
+              }
+              ...on PageHomeHeroSectionRecord{
+                id
+                title
+                description
+                ctatext
+                ctalink
+              }
+              ...on CommonFooterRecord {
+                id
+              }
+            }
+          }
+        }
+    }`;
+
+    return await this.fetchData(query, isPreview);
+  }
+
   async fetchData(query, isPreview) {
     const url = isPreview ? "preview" : "";
     return await axiosClient

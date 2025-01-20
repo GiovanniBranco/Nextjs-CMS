@@ -1,6 +1,6 @@
 import { Box, Button, Image, Text, theme } from "../../../theme/components";
 
-const PageHomeHeroSection = (props) => {
+const HeroSection = ({ title, description, ctalink, ctatext }) => {
   return (
     <Box
       tag="main"
@@ -26,13 +26,13 @@ const PageHomeHeroSection = (props) => {
         }}
       >
         <Text tag="h1" variant="display1">
-          {props.title}
+          {title}
         </Text>
         <Text tag="p" variant="body1">
-          {props.description}
+          {description}
         </Text>
-        <Button href={props.ctalink} colorVariant="neutral">
-          {props.ctatext}
+        <Button href={ctalink} colorVariant="neutral">
+          {ctatext}
         </Button>
       </Box>
 
@@ -50,4 +50,4 @@ const PageHomeHeroSection = (props) => {
   );
 };
 
-export default PageHomeHeroSection;
+export default HeroSection;

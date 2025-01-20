@@ -56,6 +56,41 @@ class CmsService {
     return await this.fetchData(query, isPreview);
   }
 
+  async getFAQContent(isPreview = false) {
+    const query = `query {
+        pageFaq {
+          pageContent {
+            section{
+              componentName: __typename
+              ... on CommonSeoBlockRecord {
+                id
+                title
+              }
+              ...on CommonMenuRecord {
+                id
+              }
+              ...on PageFaqDisplayQuestionsSectionRecord {
+                id
+                categories {
+                  id
+                  title
+                  questions {
+                    id
+                    title
+                  }
+                }
+              }
+              ...on CommonFooterRecord {
+                id
+              }
+            }
+          }
+        }
+    }`;
+
+    return await this.fetchData(query, isPreview);
+  }
+
   async fetchData(query, isPreview) {
     const url = isPreview ? "preview" : "";
     return await axiosClient

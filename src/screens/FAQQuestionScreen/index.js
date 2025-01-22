@@ -7,9 +7,14 @@ import { PageHoc } from "../../components/wrappers/pageHOC";
 import CmsService from "../../services/cmsService";
 import { Box, Text, theme } from "../../theme/components";
 
-export async function getStaticPaths() {
+export async function getStaticPaths({ preview }) {
+  const data = await CmsService.getFAQQuestions(preview, 100, 0);
+
+  console.log(data.allContentFaqQuestions);
   return {
-    paths: [{ params: { id: "f138c88d" } }, { params: { id: "h138c88d" } }],
+    paths: data.allContentFaqQuestions.map(({ id }) => ({
+      params: { id },
+    })),
     fallback: false,
   };
 }
@@ -17,7 +22,7 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params, preview }) {
   const { id } = params;
   try {
-    const data = await CmsService.getFaqQuestionContent(preview);
+    const data = await CmsService.getFaqQuestionContent(id, preview);
     const globalContent = await CmsService.getGlobalContent(preview);
     return {
       props: {

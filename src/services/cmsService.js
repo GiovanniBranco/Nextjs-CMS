@@ -1,18 +1,25 @@
 import axiosClient from "./axiosClient";
 
 class CmsService {
-  async getFaqQuestionContent(isPreview = false) {
-    const query = `
-        query {
-        contentFaqQuestion {
-            title
-            content {
-                value
-            }
-        }   
+  async getFaqQuestionContent(id, isPreview = false) {
+    const query = `query($id: ItemId) {
+      contentFaqQuestion(filter: {
+        id: {
+          eq: $id
+        }
+      } ) {
+        title
+        content {
+            value
+        }
+      }
     }`;
 
-    return await this.fetchData(query, isPreview);
+    const variables = {
+      id,
+    };
+
+    return await this.fetchData(query, isPreview, variables);
   }
 
   async getGlobalContent(isPreview = false) {
@@ -91,12 +98,28 @@ class CmsService {
     return await this.fetchData(query, isPreview);
   }
 
-  async fetchData(query, isPreview) {
+  async getFAQQuestions(isPreview = false, first = 10, skip = 0) {
+    const query = `query($first: IntType, $skip: IntType) {
+        allContentFaqQuestions(first: $first, skip:$skip) {
+          id
+          title
+        }
+    }`;
+
+    const variables = {
+      first: first,
+      skip: skip,
+    };
+
+    return await this.fetchData(query, isPreview, variables);
+  }
+
+  async fetchData(query, isPreview, variables = {}) {
     const url = isPreview ? "preview" : "";
     return await axiosClient
       .post(
         url,
-        { query },
+        { query, variables },
         {
           headers: {
             "Content-Type": "application/json",

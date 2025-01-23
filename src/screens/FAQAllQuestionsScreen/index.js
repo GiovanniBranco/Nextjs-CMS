@@ -10,6 +10,7 @@ export async function getStaticProps({ preview }) {
       globalContent,
       faqContent: faqContent.pageFaq.pageContent[0].section,
     },
+    revalidate: 3600, //1 hour
   };
 }
 

@@ -35,6 +35,7 @@ export async function getStaticProps({ params, preview }) {
         },
         globalContent: globalContent,
       },
+      revalidate: 3600, //1 hour
     };
   } catch (e) {
     throw new Error(e.message);

@@ -1,12 +1,12 @@
 import { CmsSections } from ".";
 
-const CMSSectionRender = ({ pageContent }) => {
+const CMSSectionRender = ({ pageContent, generalContent }) => {
   return pageContent.map((content) => {
     const Component = CmsSections[content.componentName];
 
     if (!Component) return null;
 
-    return <Component key={content.id} {...content} />;
+    return <Component key={content.id} {...content} {...generalContent} />;
   });
 };
 

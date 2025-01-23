@@ -6,11 +6,11 @@ import { Menu } from "../../components/commons/Menu";
 import { PageHoc } from "../../components/wrappers/pageHOC";
 import CmsService from "../../services/cmsService";
 import { Box, Text, theme } from "../../theme/components";
+import CMSSectionRender from "../../components/CMSSections/CMSSectionRender";
 
 export async function getStaticPaths({ preview }) {
   const data = await CmsService.getFAQQuestions(preview, 100, 0);
 
-  console.log(data.allContentFaqQuestions);
   return {
     paths: data.allContentFaqQuestions.map(({ id }) => ({
       params: { id },
@@ -22,13 +22,17 @@ export async function getStaticPaths({ preview }) {
 export async function getStaticProps({ params, preview }) {
   const { id } = params;
   try {
-    const data = await CmsService.getFaqQuestionContent(id, preview);
+    const pageContent = await CmsService.getFaqQuestionPageContent(preview);
+    const faqQuestionData = await CmsService.getFaqQuestionContent(id, preview);
     const globalContent = await CmsService.getGlobalContent(preview);
+
     return {
       props: {
         id,
-        title: data?.contentFaqQuestion?.title,
-        content: data?.contentFaqQuestion?.content,
+        content: {
+          pageContent: pageContent.pageFaqQuestion.pageContent[0].section,
+          generalContent: faqQuestionData,
+        },
         globalContent: globalContent,
       },
     };
@@ -37,56 +41,12 @@ export async function getStaticProps({ params, preview }) {
   }
 }
 
-function FAQQuestionScreen({ title, content }) {
+function FAQQuestionScreen({ content }) {
   return (
-    <>
-      <Head>
-        <title>FAQ - Alura</title>
-      </Head>
-
-      <Menu />
-
-      <Box
-        tag="main"
-        styleSheet={{
-          flex: 1,
-          backgroundColor: theme.colors.neutral.x050,
-          paddingTop: theme.space.x20,
-          paddingHorizontal: theme.space.x4,
-        }}
-      >
-        <Box
-          styleSheet={{
-            display: "flex",
-            gap: theme.space.x4,
-            flexDirection: "column",
-            width: "100%",
-            maxWidth: theme.space.xcontainer_lg,
-            marginHorizontal: "auto",
-          }}
-        >
-          <Text tag="h1" variant="heading1">
-            {title}
-          </Text>
-
-          <StructuredText
-            data={content}
-            customNodeRules={[
-              renderNodeRule(isHeading, ({ children, key, node }) => {
-                const variant = `heading${node.level + 1}`;
-                return (
-                  <Text key={key} variant={variant}>
-                    {children}
-                  </Text>
-                );
-              }),
-            ]}
-          />
-        </Box>
-      </Box>
-
-      <Footer />
-    </>
+    <CMSSectionRender
+      pageContent={content.pageContent}
+      generalContent={content.generalContent}
+    />
   );
 }
 

@@ -1,6 +1,33 @@
 import axiosClient from "./axiosClient";
 
 class CmsService {
+  async getFaqQuestionPageContent(isPreview = false) {
+    const query = `query {
+      pageFaqQuestion {
+        pageContent {
+          section {
+            componentName: __typename
+                  ... on CommonSeoBlockRecord {
+                    id
+                    title
+                  }
+                  ...on CommonMenuRecord {
+                    id
+                  }
+                  ...on PageFaqQuestionsDisplayQuestionRecord {
+                    id
+                  }
+                  ...on CommonFooterRecord {
+                    id
+                  }
+          }
+        }
+      }
+    }`;
+
+    return await this.fetchData(query, isPreview);
+  }
+
   async getFaqQuestionContent(id, isPreview = false) {
     const query = `query($id: ItemId) {
       contentFaqQuestion(filter: {
